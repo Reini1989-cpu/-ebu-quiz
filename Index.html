@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EBU Klausurtrainer – Multiple Choice</title>
+  <style>
+    :root{
+      --bg:#f6f7fb; --card:#ffffff; --text:#172033; --muted:#667085; --line:#d9dee8;
+      --primary:#2563eb; --primary-dark:#1d4ed8; --ok:#15803d; --bad:#b42318; --warn:#b7791f;
+      --ok-bg:#ecfdf3; --bad-bg:#fef3f2; --blue-bg:#eff6ff;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);}
+    header{background:linear-gradient(135deg,#172033,#2563eb);color:white;padding:28px 18px 34px;}
+    .wrap{max-width:1050px;margin:0 auto;}
+    h1{margin:0 0 8px;font-size:clamp(1.7rem,4vw,3rem);line-height:1.05}
+    .subtitle{margin:0;color:#e5efff;font-size:1.05rem;max-width:760px}
+    main{padding:18px;}
+    .panel{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 30px rgba(23,32,51,.06);padding:18px;margin-top:-28px;}
+    .controls{display:grid;grid-template-columns:repeat(12,1fr);gap:12px;align-items:end}
+    label{font-weight:700;font-size:.9rem;display:block;margin-bottom:6px}
+    select,button{width:100%;border:1px solid var(--line);border-radius:12px;background:white;padding:11px 12px;font-size:1rem;color:var(--text)}
+    button{cursor:pointer;font-weight:800;background:var(--primary);color:white;border-color:var(--primary);transition:.15s}
+    button:hover{background:var(--primary-dark)}
+    button.secondary{background:white;color:var(--primary);border-color:#b7cdfd}
+    button.secondary:hover{background:var(--blue-bg)}
+    button.ghost{background:white;color:var(--text)}
+    button.ghost:hover{background:#f8fafc}
+    .col-3{grid-column:span 3}.col-2{grid-column:span 2}.col-4{grid-column:span 4}.col-12{grid-column:span 12}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}
+    .stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+    .stat b{font-size:1.35rem;display:block}.stat span{color:var(--muted);font-size:.9rem}
+    .quiz{display:grid;grid-template-columns:1fr 320px;gap:16px;align-items:start}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(23,32,51,.04)}
+    .meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;color:var(--muted);font-weight:700;font-size:.86rem}
+    .pill{background:#f2f4f7;border:1px solid var(--line);border-radius:999px;padding:5px 9px}
+    .question{font-size:1.35rem;line-height:1.3;margin:10px 0 16px;font-weight:850}
+    .answers{display:grid;gap:10px}
+    .answer{border:2px solid var(--line);border-radius:14px;padding:13px 14px;background:white;cursor:pointer;display:flex;gap:10px;align-items:flex-start;line-height:1.35}
+    .answer:hover{border-color:#93b4ff;background:#fbfdff}
+    .answer input{margin-top:3px;transform:scale(1.2)}
+    .answer.correct{border-color:var(--ok);background:var(--ok-bg)}
+    .answer.wrong{border-color:var(--bad);background:var(--bad-bg)}
+    .feedback{margin-top:14px;border-radius:14px;padding:12px 14px;font-weight:750;display:none}
+    .feedback.ok{display:block;background:var(--ok-bg);color:var(--ok);border:1px solid #bbf7d0}
+    .feedback.bad{display:block;background:var(--bad-bg);color:var(--bad);border:1px solid #fecaca}
+    .nav{display:flex;gap:10px;margin-top:14px}.nav button{flex:1}
+    .side h2{margin:0 0 10px;font-size:1.1rem}.small{font-size:.92rem;color:var(--muted);line-height:1.45}.list{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-top:12px}
+    .dot{border:1px solid var(--line);border-radius:10px;padding:8px 0;text-align:center;background:white;font-weight:800;color:var(--muted);cursor:pointer}
+    .dot.current{outline:3px solid #bfdbfe;color:var(--primary)}.dot.done-ok{background:var(--ok-bg);color:var(--ok);border-color:#86efac}.dot.done-bad{background:var(--bad-bg);color:var(--bad);border-color:#fca5a5}
+    .result{display:none}.result.show{display:block}.result h2{margin-top:0}.grade{font-size:2.2rem;font-weight:900;margin:8px 0}.bar{height:12px;background:#eaecf0;border-radius:99px;overflow:hidden}.bar div{height:100%;background:var(--primary);width:0%}
+    .review{margin-top:14px;display:grid;gap:10px}.review-item{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}.review-item.ok{border-color:#bbf7d0;background:#fbfffc}.review-item.bad{border-color:#fecaca;background:#fffafa}.review-item b{display:block;margin-bottom:5px}
+    @media(max-width:860px){.controls{grid-template-columns:1fr}.col-2,.col-3,.col-4{grid-column:span 1}.quiz{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.panel{margin-top:-20px}.nav{flex-direction:column}}
+  </style>
+</head>
+<body>
+<header><div class="wrap"><h1>EBU Klausurtrainer</h1><p class="subtitle">Multiple-Choice-Web-App für EBU01, EBU02 und EBU03. Wähle Umfang und Modus, beantworte die Fragen und erhalte direkt Auswertung und Wiederholung.</p></div></header>
+<main class="wrap">
+  <section class="panel">
+    <div class="controls">
+      <div class="col-3"><label for="heft">Studienheft</label><select id="heft"><option value="all">Alle Hefte</option><option value="EBU01">EBU01 Grundlagen</option><option value="EBU02">EBU02 E-Commerce</option><option value="EBU03">EBU03 Management</option></select></div>
+      <div class="col-3"><label for="amount">Fragenanzahl</label><select id="amount"><option value="10">10 Fragen</option><option value="20">20 Fragen</option><option value="30">30 Fragen</option><option value="48" selected>Alle 48 Fragen</option></select></div>
+      <div class="col-3"><label for="mode">Modus</label><select id="mode"><option value="instant" selected>Sofort korrigieren</option><option value="exam">Prüfungsmodus</option></select></div>
+      <div class="col-3"><label>&nbsp;</label><button id="startBtn">Training starten</button></div>
+    </div>
+  </section>
+
+  <section class="stats" id="stats">
+    <div class="stat"><b id="statProgress">0/0</b><span>Fortschritt</span></div>
+    <div class="stat"><b id="statCorrect">0</b><span>Richtig</span></div>
+    <div class="stat"><b id="statWrong">0</b><span>Falsch</span></div>
+    <div class="stat"><b id="statPercent">0%</b><span>Quote</span></div>
+  </section>
+
+  <section class="quiz">
+    <div class="card" id="quizCard">
+      <div class="meta"><span class="pill" id="qHeft">EBU</span><span class="pill" id="qIndex">Frage 0</span><span class="pill" id="qTopic">Thema</span></div>
+      <div class="question" id="question">Klicke auf „Training starten“.</div>
+      <div class="answers" id="answers"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="nav"><button class="ghost" id="prevBtn">Zurück</button><button class="secondary" id="checkBtn">Antwort prüfen</button><button id="nextBtn">Weiter</button></div>
+    </div>
+    <aside class="card side">
+      <h2>Fragenübersicht</h2>
+      <p class="small">Grün = richtig, rot = falsch. Im Prüfungsmodus siehst du die Bewertung erst am Ende.</p>
+      <div class="list" id="questionList"></div>
+      <div class="result" id="resultBox">
+        <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
+        <h2>Ergebnis</h2>
+        <div class="grade" id="grade">0%</div>
+        <div class="bar"><div id="barFill"></div></div>
+        <p class="small" id="resultText"></p>
+        <button class="secondary" id="retryWrongBtn">Falsche wiederholen</button>
+        <button class="ghost" id="resetBtn" style="margin-top:8px">Neu starten</button>
+      </div>
+    </aside>
+  </section>
+  <section class="review" id="review"></section>
+</main>
+<script>
+const QUESTIONS = [
+{heft:'EBU01',topic:'Grundlagen',q:'Was beschreibt E-Business am besten?',a:['Die Nutzung digitaler Informationstechnologien zur Unterstützung von Geschäftsprozessen','Nur den Verkauf von Waren über Amazon','Ausschließlich Werbung im Internet','Nur elektronische Zahlungssysteme'],c:0},
+{heft:'EBU01',topic:'Grundlagen',q:'Wie ist E-Commerce im Verhältnis zu E-Business einzuordnen?',a:['E-Commerce ist umfassender als E-Business','E-Commerce ist ein Teilbereich von E-Business','E-Commerce und E-Business sind identisch','E-Commerce gehört ausschließlich zum E-Government'],c:1},
+{heft:'EBU01',topic:'Net Economy',q:'Was meint „Net Economy“?',a:['Wirtschaft ohne Internet','Nur die Telekommunikationsbranche','Die virtuelle, vernetzte Seite der Wirtschaft auf Basis des Internets','Nur Social-Media-Marketing'],c:2},
+{heft:'EBU01',topic:'Disintermediation',q:'Was bedeutet Disintermediation?',a:['Zusätzliche Zwischenhändler werden eingebaut','Kunden kaufen nur noch offline','Lieferketten werden verlängert','Zwischenstufen im Handel fallen weg'],c:3},
+{heft:'EBU01',topic:'Entwicklung',q:'Worin liegen historische Wurzeln des E-Business?',a:['Im elektronischen Datenaustausch zwischen Unternehmen seit den 1960er-Jahren','Erst in sozialen Netzwerken ab 2010','Nur im mobilen Bezahlen','In der Erfindung von Smartphones'],c:0},
+{heft:'EBU01',topic:'Internet-Merkmale',q:'Welche Merkmale machen das Internet als Infrastruktur für E-Business besonders wichtig?',a:['Papierform, feste Öffnungszeiten, lokale Begrenzung','Einwegkommunikation und geringe Datenmengen','Interaktivität, Ubiquität, Asynchronität, Multimedia und Individualisierung','Nur Telefonie und Fax'],c:2},
+{heft:'EBU01',topic:'Big Data',q:'Welche Punkte gehören zu Big Data?',a:['Nur kleine strukturierte Datensätze','Datenmenge, Datenvielfalt, Geschwindigkeit und Analyse','Nur Excel-Tabellen','Nur Datenschutzprobleme'],c:1},
+{heft:'EBU01',topic:'TIME',q:'Wofür steht die TIME-Branche?',a:['Transport, Industrie, Maschinenbau, Energie','Textil, Immobilien, Medien, Energie','Telekommunikation, Informationstechnologie, Medien, Entertainment','Technik, Internet, Marketing, Einkauf'],c:2},
+{heft:'EBU01',topic:'WWW',q:'Was ist das World Wide Web im Verhältnis zum Internet?',a:['Ein anderes Wort für WLAN','Ein Dienst/System im Internet zum Abruf von Hypertext-Dokumenten','Ein Bezahlsystem','Ein Mobilfunkstandard'],c:1},
+{heft:'EBU01',topic:'M-Business',q:'Was ist ein wesentliches Merkmal von M-Business?',a:['Transaktionen können über mobile Endgeräte orts- und zeitunabhängig erfolgen','Es funktioniert nur am Desktop-PC','Es ist nur für Behörden relevant','Es ersetzt alle physischen Produkte'],c:0},
+{heft:'EBU01',topic:'ITV',q:'Was unterscheidet Video-on-Demand von Pay-per-View?',a:['Video-on-Demand ist immer kostenlos','Pay-per-View gibt es nur im Radio','Video-on-Demand funktioniert nur offline','Bei Video-on-Demand wählt der Nutzer den Film und Startzeitpunkt individueller aus'],c:3},
+{heft:'EBU01',topic:'Kommunikation',q:'Was beschreibt Kommunikation im Internet treffend?',a:['Nur ein Sender sendet an viele passive Empfänger','Nutzer können Sender und Empfänger sein; Kommunikation wird many-to-many','Es gibt kein Feedback','Kommunikation ist immer anonym und einseitig'],c:1},
+{heft:'EBU01',topic:'Virtualität',q:'Was bedeutet Virtualität im E-Business?',a:['Eine digitale Handlungsebene, auf der Informationen und Transaktionen reale Wirkungen haben können','Reine Fantasie ohne wirtschaftliche Bedeutung','Nur Computerspiele','Ausschließlich künstliche Intelligenz'],c:0},
+{heft:'EBU01',topic:'Multimedialität',q:'Was bedeutet Medienkonvergenz?',a:['Medien werden vollständig getrennt','Printmedien ersetzen das Internet','Nur Fernsehen bleibt übrig','Verschiedene Medien und Informations-/Kommunikationstechnologien wachsen zusammen'],c:3},
+{heft:'EBU01',topic:'Geschäftsmodelle',q:'Welche fünf Geschäftskonzepttypen werden im E-Business häufig unterschieden?',a:['Einkauf, Lager, Produktion, Versand, Retoure','B2B, B2C, C2C, B2E, B2A','Content, Commerce, Context, Connection, Communication','Preis, Produkt, Platz, Promotion, Personal'],c:2},
+{heft:'EBU02',topic:'Grundlagen',q:'Was ist E-Commerce?',a:['Kauf und Verkauf von Gütern und Dienstleistungen über das Internet','Nur elektronische Beschaffung im Unternehmen','Nur Kommunikation zwischen Behörden','Nur Werbung auf Social Media'],c:0},
+{heft:'EBU02',topic:'M-Commerce',q:'Was beschreibt M-Commerce richtig?',a:['Handel ausschließlich über Kataloge','Mobiler elektronischer Handel über Smartphones, Tablets oder ähnliche Geräte','Nur stationärer Einzelhandel','Nur Zahlungsverkehr zwischen Banken'],c:1},
+{heft:'EBU02',topic:'Social Commerce',q:'Was steht beim Social Commerce im Vordergrund?',a:['Kunden werden nicht beteiligt','Es gibt keine sozialen Netzwerke','Aktive Beteiligung der Kunden, Empfehlungen, Kommentare und soziale Beziehungen','Nur klassische Fernsehwerbung'],c:2},
+{heft:'EBU02',topic:'Everywhere Commerce',q:'Was bedeutet Everywhere Commerce?',a:['Ausschließlich Verkauf im Ladengeschäft','Nur Großhandel','Verkauf nur über Telefon','Verknüpfung von Online- und Offline-Kanälen, sodass Kunden überall kaufen können'],c:3},
+{heft:'EBU02',topic:'Marktformen',q:'Was bedeutet B2C?',a:['Unternehmen verkauft an private Konsumenten','Privatperson verkauft an Privatperson','Unternehmen verkauft an Unternehmen','Behörde verkauft an Unternehmen'],c:0},
+{heft:'EBU02',topic:'Distanzhandel',q:'Was ist Distanzhandel?',a:['Verkauf ohne räumliche Trennung','Nur Verkauf an Mitarbeiter','Anbieter und Nachfrager sind räumlich getrennt; Bestellung und Lieferung fallen zeitlich auseinander','Nur Barzahlung im Laden'],c:2},
+{heft:'EBU02',topic:'E-Pace',q:'Was meint E-Pace?',a:['Nur möglichst langsame Lieferung','Richtiges Timing, Schnelligkeit, Zuverlässigkeit und situationsgerechte Angebote','Nur niedrige Preise','Nur Design des Online-Shops'],c:1},
+{heft:'EBU02',topic:'E-Shop/E-Marketplace',q:'Was ist der Unterschied zwischen E-Shop und E-Marketplace?',a:['Ein E-Shop ist immer C2C, ein E-Marketplace immer B2B','Es gibt keinen Unterschied','Ein E-Marketplace verkauft immer nur eigene Ware','Ein E-Shop ist eine virtuelle Ladenumgebung; ein E-Marketplace bringt Anbieter und Nachfrager auf einer Plattform zusammen'],c:3},
+{heft:'EBU02',topic:'Kaufprozess',q:'Was verändert sich im neuen Kaufprozess gegenüber dem traditionellen Kaufprozess?',a:['Produktauswahl und Anbieterwahl entkoppeln sich; der Kunde informiert sich oft zuerst online','Kunden informieren sich gar nicht mehr','Der Händler bestimmt allein die Produktauswahl','Online-Bewertungen spielen keine Rolle'],c:0},
+{heft:'EBU02',topic:'Pure Player',q:'Was ist ein Internet-Pure-Player?',a:['Ein Händler ohne Internetauftritt','Ein Unternehmen, das Waren/Dienstleistungen nur über das Internet vertreibt','Ein stationärer Händler ohne Online-Shop','Ein reiner Lieferdienst ohne Verkauf'],c:1},
+{heft:'EBU02',topic:'Multi Channel',q:'Was ist ein Click-&-Mortar-Anbieter?',a:['Ein Händler, der nur per Katalog verkauft','Ein Händler ohne physische Filiale','Ein stationärer Händler, der zusätzlich einen Online-Kanal betreibt','Ein reiner Marktplatzbetreiber'],c:2},
+{heft:'EBU02',topic:'Hybrid',q:'Was beschreibt hybriden Online-Handel?',a:['Kombination aus klassischem Katalogversand und Online-Handel','Nur Verkauf über Apps','Nur C2C-Handel','Nur Verkauf digitaler Güter'],c:0},
+{heft:'EBU02',topic:'Vertikalisierung',q:'Was bedeutet vertikalisierter Online-Handel?',a:['Händler geben alle Prozesse an Zwischenhändler ab','Händler verkaufen ausschließlich fremde Ware','Nur die Logistik wird digitalisiert','Ein Unternehmen kontrolliert große Teile der Supply Chain, z. B. Design, Beschaffung, Herstellung und Vertrieb'],c:3},
+{heft:'EBU02',topic:'M-Commerce Nutzen',q:'Welche Vorteile bietet M-Commerce für Nutzer besonders?',a:['Nur größere Bildschirme','Mobilität, Erreichbarkeit, Kontextsensitivität und Identifizierung','Keine Personalisierung','Nur geringere Preise'],c:1},
+{heft:'EBU02',topic:'Mobile Endgeräte',q:'Welche Nachteile mobiler Endgeräte werden im Vergleich zu stationären Geräten genannt?',a:['Größere Displays und mehr Akkuleistung','Keine Internetfähigkeit','Kleineres Display, schwierigere Dateneingabe, geringere Akkuleistung/Bandbreite','Keine Nutzung von Apps möglich'],c:2},
+{heft:'EBU02',topic:'Shop-Systeme',q:'Welche Anforderungen gehören zu einem guten Shop-System?',a:['Unübersichtlichkeit und starre Strukturen','Nur hübsche Farben','Benutzbarkeit, Barrierefreiheit, Skalierbarkeit, Erweiterbarkeit, Internationalisierbarkeit und Sicherheit','Keine Schnittstellen zu anderen Systemen'],c:2},
+{heft:'EBU02',topic:'E-Payment',q:'Wofür steht ACID im Zusammenhang mit E-Payment?',a:['Auswahl, Coupon, Interface, Design','Atomarität, Konsistenz, Isolation, Dauerhaftigkeit','Analyse, Content, Internet, Datenbank','Angebot, Commerce, Information, Distribution'],c:1},
+{heft:'EBU03',topic:'Sourcing',q:'Was bedeutet Sourcing?',a:['Gesamtheit der auf Beschaffungsmärkte gerichteten Aktivitäten','Nur Verkauf an Endkunden','Nur Werbung im Internet','Nur Retourenmanagement'],c:0},
+{heft:'EBU03',topic:'Beschaffung/Einkauf',q:'Was ist der Unterschied zwischen Beschaffung und Einkauf?',a:['Einkauf ist weiter gefasst als Beschaffung','Beschaffung umfasst mehr, z. B. auch Beschaffungslogistik; Einkauf ist enger gefasst','Beide Begriffe meinen ausschließlich Personalbeschaffung','Beschaffung betrifft nur Marketing'],c:1},
+{heft:'EBU03',topic:'Outsourcing',q:'Was bedeutet Outsourcing?',a:['Reintegration ausgelagerter Prozesse','Ausschließlich interne Leistungserstellung','Auslagerung von Leistungen an externe spezialisierte Anbieter','Verkauf über soziale Netzwerke'],c:2},
+{heft:'EBU03',topic:'Insourcing',q:'Was ist Insourcing?',a:['Rückholung zuvor ausgelagerter Leistungsprozesse ins Unternehmen','Einkauf bei möglichst vielen Lieferanten','Auslagerung an Kunden','Nur Beschaffung im Ausland'],c:0},
+{heft:'EBU03',topic:'Crowdsourcing',q:'Was beschreibt Crowdsourcing?',a:['Auslagerung von Aufgaben an eine Vielzahl von Nutzern im Internet','Einkauf nur bei einem Lieferanten','Beschaffung ausschließlich per Fax','Automatische Lagerhaltung ohne Nutzerbeteiligung'],c:0},
+{heft:'EBU03',topic:'E-Procurement',q:'Was ist E-Procurement?',a:['Elektronisch unterstützte Beschaffung bzw. elektronischer Einkauf von Produkten und Dienstleistungen','Nur Social-Media-Werbung','Nur stationärer Verkauf','Nur Kundenservice nach dem Kauf'],c:0},
+{heft:'EBU03',topic:'Sourcing-Arten',q:'Was ist Single Sourcing?',a:['Ein Produkt wird freiwillig von einem Lieferanten bezogen','Es gibt immer zwei Lieferanten','Es gibt viele Lieferanten','Ein Lieferant besitzt zwingend ein Monopol'],c:0},
+{heft:'EBU03',topic:'Sourcing-Arten',q:'Was beschreibt Dual Sourcing?',a:['Beschaffung bei vielen Lieferanten','Beschaffung bei zwei Lieferanten','Beschaffung nur lokal','Beschaffung nur in Niedriglohnländern'],c:1},
+{heft:'EBU03',topic:'Global Sourcing',q:'Was ist Low-Cost-Country-Sourcing?',a:['Beschaffung in Ländern mit besonders hohen Lohnkosten','Beschaffung mit Fokus auf geografische Nähe und Geschwindigkeit','Beschaffung in Ländern mit niedrigen Kostenstrukturen','Beschaffung ausschließlich über Kunden-Communitys'],c:2},
+{heft:'EBU03',topic:'Speed Sourcing',q:'Was ist Speed-Sourcing?',a:['Beschaffung mit Fokus auf schnelle Reaktion, kurze Wege und zeitnahe Belieferung','Beschaffung nur nach niedrigstem Preis','Beschaffung ohne Lieferantenbewertung','Beschaffung nur durch Auktionen'],c:0},
+{heft:'EBU03',topic:'E-Sourcing',q:'Was ist ein Ziel von E-Sourcing?',a:['Prozesskosten erhöhen','Beschaffung intransparenter machen','Bestellprozesse effizienter machen und Transaktionskosten senken','Lieferantenbeziehungen grundsätzlich vermeiden'],c:2},
+{heft:'EBU03',topic:'Auktionen',q:'Was ist eine Reverse Auction bzw. Auftragsauktion?',a:['Verkäufer startet die Auktion, und der Preis steigt','Käufer startet die Auktion, Lieferanten bieten, und der Preis kann während der Auktion fallen','Kunden bewerten Produkte nach dem Kauf','Eine Auktion ohne Preisangabe'],c:1},
+{heft:'EBU03',topic:'Online-Marketing',q:'Was unterscheidet Online-Marketing vom klassischen Offline-Marketing?',a:['Online-Marketing setzt stärker auf Interaktion, Individualisierung und Kundenbindung','Online-Marketing ist immer Massenwerbung ohne Feedback','Offline-Marketing ist immer personalisiert','Online-Marketing hat keine Datenbasis'],c:0},
+{heft:'EBU03',topic:'SEO/SEM',q:'Was ist SEO?',a:['Bezahltes Schalten von Anzeigen neben Suchergebnissen','Optimierung einer Webseite, damit sie in organischen Suchergebnissen besser gefunden wird','Elektronische Zahlung','Ein CRM-System'],c:1},
+{heft:'EBU03',topic:'CRM',q:'Welche Phasen gehören typischerweise zum Customer-Buying-Cycle?',a:['Produktion, Lagerung, Verpackung, Versand','Anregung, Evaluation, Kauf, After Sales','Einstellung, Kündigung, Zeugnis, Austritt','Einkauf, Buchhaltung, Inventur, Controlling'],c:1},
+{heft:'EBU03',topic:'CRM-Systeme',q:'Welche drei Komponenten umfasst ein CRM-System grundsätzlich?',a:['Operatives, kollaboratives und analytisches CRM','Einkauf, Produktion und Logistik','Preis, Produkt und Werbung','Shop, Marktplatz und Behörde'],c:0}
+];
+let pool=[], current=0, selected={}, checked={}, mode='instant';
+const $=id=>document.getElementById(id);
+function shuffle(arr){return [...arr].sort(()=>Math.random()-0.5)}
+function start(customPool){
+  mode=$('mode').value;
+  const heft=$('heft').value;
+  const amount=+$('amount').value;
+  const base=customPool || QUESTIONS.filter(x=>heft==='all'||x.heft===heft);
+  pool=shuffle(base).slice(0, Math.min(amount, base.length));
+  current=0; selected={}; checked={}; $('resultBox').classList.remove('show'); $('review').innerHTML=''; render();
+}
+function render(){
+  if(!pool.length){$('question').textContent='Keine Fragen gefunden.'; $('answers').innerHTML=''; return;}
+  const item=pool[current];
+  $('qHeft').textContent=item.heft; $('qTopic').textContent=item.topic; $('qIndex').textContent=`Frage ${current+1} von ${pool.length}`; $('question').textContent=item.q;
+  $('answers').innerHTML=item.a.map((txt,i)=>{
+    let cls='answer';
+    if(checked[current] && mode==='instant'){
+      if(i===item.c) cls+=' correct';
+      if(selected[current]===i && i!==item.c) cls+=' wrong';
+    }
+    return `<label class="${cls}"><input type="radio" name="answer" value="${i}" ${selected[current]===i?'checked':''} ${checked[current]&&mode==='instant'?'disabled':''}><span><b>${String.fromCharCode(65+i)})</b> ${txt}</span></label>`
+  }).join('');
+  document.querySelectorAll('input[name=answer]').forEach(el=>el.addEventListener('change',e=>{selected[current]=+e.target.value; if(mode==='instant') check(); updateStats();}));
+  const fb=$('feedback'); fb.className='feedback'; fb.textContent='';
+  if(checked[current] && mode==='instant'){
+    const ok=selected[current]===item.c; fb.classList.add(ok?'ok':'bad'); fb.textContent= ok?'Richtig.':'Falsch. Richtig ist: '+String.fromCharCode(65+item.c)+') '+item.a[item.c];
+  }
+  $('checkBtn').style.display=mode==='exam'?'none':'block';
+  $('prevBtn').disabled=current===0; $('nextBtn').textContent=current===pool.length-1?'Auswertung':'Weiter';
+  renderList(); updateStats();
+}
+function check(){ if(selected[current]===undefined) return; checked[current]=true; render(); }
+function renderList(){
+  $('questionList').innerHTML=pool.map((q,i)=>{
+    let cls='dot'; if(i===current) cls+=' current';
+    if(checked[i]|| (mode==='exam' && selected[i]!==undefined && $('resultBox').classList.contains('show'))){ cls+= selected[i]===q.c?' done-ok':' done-bad'; }
+    return `<button class="${cls}" data-i="${i}">${i+1}</button>`
+  }).join('');
+  document.querySelectorAll('.dot').forEach(b=>b.addEventListener('click',e=>{current=+e.currentTarget.dataset.i; render();}));
+}
+function updateStats(){
+  const answered=Object.keys(selected).length; const correct=pool.reduce((s,q,i)=>s+(selected[i]===q.c?1:0),0); const wrong=answered-correct; const pct=answered?Math.round(correct/answered*100):0;
+  $('statProgress').textContent=`${answered}/${pool.length}`; $('statCorrect').textContent=correct; $('statWrong').textContent=wrong; $('statPercent').textContent=pct+'%';
+}
+function finish(){
+  pool.forEach((_,i)=>{ if(selected[i]!==undefined) checked[i]=true; });
+  const answered=Object.keys(selected).length; const correct=pool.reduce((s,q,i)=>s+(selected[i]===q.c?1:0),0); const pct=Math.round(correct/pool.length*100);
+  $('resultBox').classList.add('show'); $('grade').textContent=pct+'%'; $('barFill').style.width=pct+'%';
+  $('resultText').textContent=`${correct} von ${pool.length} Fragen richtig. Nicht beantwortete Fragen zählen als falsch.`;
+  $('review').innerHTML=pool.map((q,i)=>`<div class="review-item ${selected[i]===q.c?'ok':'bad'}"><b>${i+1}. ${q.heft} – ${q.topic}</b>${q.q}<br><span class="small">Deine Antwort: ${selected[i]===undefined?'keine':String.fromCharCode(65+selected[i])+') '+q.a[selected[i]]}<br>Richtig: ${String.fromCharCode(65+q.c)}) ${q.a[q.c]}</span></div>`).join('');
+  renderList(); updateStats();
+}
+$('startBtn').addEventListener('click',()=>start());
+$('checkBtn').addEventListener('click',check);
+$('nextBtn').addEventListener('click',()=>{ if(current<pool.length-1){current++; render();} else finish(); });
+$('prevBtn').addEventListener('click',()=>{ if(current>0){current--; render();} });
+$('resetBtn').addEventListener('click',()=>start());
+$('retryWrongBtn').addEventListener('click',()=>{ const wrong=pool.filter((q,i)=>selected[i]!==q.c); if(wrong.length) start(wrong); });
+start();
+</script>
+</body>
+</html>
